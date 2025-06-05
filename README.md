@@ -19,7 +19,7 @@ _Version_: `development`
 
 ## 🚀 Choose Your Deployment Path
 
-> 📋 **Quick Decision Guide**  
+> 📋 **Quick Decision Guide**
 > - **🌟 [Catalyst](https://www.diagrid.io/catalyst) (Recommended)**: Skip the fragmented libraries and infrastructure setup. Ready to go in under 60 seconds with fully managed, open-source Dapr. Focus on business logic, not boilerplate.
 > - **🛠️ Local Development**: Choose this for offline development, learning Dapr internals, or when you need full infrastructure control.
 >
@@ -121,7 +121,7 @@ Invoke-WebRequest -Uri $Env:DAPR_HOST_ENDPOINT:3984/v1.0/workflows/dapr/<instanc
 </details>
 
 <details>
-<summary  style="font-size: x-large"><strong>🏠 Local Dapr Development</strong></summary>
+<summary style="font-size: x-large"><strong>🏠 Local Dapr Development</strong></summary>
 
 ### Prerequisites
 - [Python 3.9 or later](https://www.python.org/downloads/)
@@ -247,7 +247,7 @@ This is useful for debugging and understanding the flow of data through the work
 
 This workflow contains several decision points that determine the flow of execution.
 
-You can customize by setting specific values in the `WorkflowData`. 
+You can customize by setting specific values in the `WorkflowData`.
 
 Decision points are in most cases mutually exclusive - only one should be set to `true`.
 
@@ -344,11 +344,11 @@ if data.get_bool("is_approved")
 
 # Production code:
 approved = await approval_service.validate_approval(
-    request.order_id, 
-    workflow_execution.instance_id
+   request.order_id,
+   workflow_execution.instance_id
 )
 if approved:
-    # Handle approval logic
+# Handle approval logic
 ```
 
 ### Handling Complexity
