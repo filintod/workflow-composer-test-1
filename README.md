@@ -28,7 +28,7 @@ _Version_: `development`
 > **Learning or customizing?** → **Local Dapr** gives you full control and insight
 
 <details>
-<summary style="font-size: large"><strong>☁️ Diagrid Catalyst</strong> (Cloud-Managed Dapr)</summary>
+<summary style="font-size: x-large"><strong>☁️ Diagrid Catalyst</strong> (Cloud-Managed Dapr)</summary>
 
 ### Prerequisites
 - [Python 3.9 or later](https://www.python.org/downloads/)
