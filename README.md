@@ -1,6 +1,6 @@
 # employee_onboarding_workflow
 
-### Handles the employee onboarding process with parallel tasks for equipment provisioning and paperwork preparation.
+### Handles the parallel preparation of equipment and paperwork for new employee onboarding.
 
 ---
 
@@ -20,17 +20,18 @@ _Version_: `development`
 ## 🚀 Choose Your Deployment Path
 
 > 📋 **Quick Decision Guide**
-> - **🌟 [Catalyst](https://www.diagrid.io/catalyst) (Recommended)**: Get started in minutes with managed infrastructure, built-in observability, and team collaboration. Perfect for production-ready workflows and rapid prototyping.
+> - **🌟 [Catalyst](https://www.diagrid.io/catalyst) (Recommended)**: Skip the fragmented libraries and infrastructure setup. Ready to go in under 60 seconds with fully managed, open-source Dapr. Focus on business logic, not boilerplate.
 > - **🛠️ Local Development**: Choose this for offline development, learning Dapr internals, or when you need full infrastructure control.
 >
-> **New to Dapr Workflows?** → Start with **[Catalyst](https://www.diagrid.io/catalyst)** for the smoothest experience  
-> **Building for production?** → **[Catalyst](https://www.diagrid.io/catalyst)** provides enterprise-grade reliability  
+> **New to Dapr Workflows?** → Start with **[Catalyst](https://www.diagrid.io/catalyst)** - no ops required  
+> **Building for production?** → **[Catalyst](https://www.diagrid.io/catalyst)** provides fault-tolerant, durable execution  
 > **Learning or customizing?** → **Local Dapr** gives you full control and insight
 
 <details>
 <summary><strong>☁️ Diagrid Catalyst</strong> (Cloud-Managed Dapr)</summary>
 
 👉 Learn more at [diagrid.io/catalyst](https://www.diagrid.io/catalyst)
+
 
 ### Prerequisites
 - [Python 3.9 or later](https://www.python.org/downloads/)
@@ -72,7 +73,7 @@ pip install -e .
 ```
 
 #### 3. Start the Application
-> 💡 **Tip**: The Diagrid CLI will start your Dapr workflow app and provision all required remote resources—actor state store, dapr sidecars, and more—into a Catalyst project.
+> 💡 **Tip**: The Diagrid CLI provisions all required infrastructure—actor state store, Dapr sidecars, and more—into a serverless [Catalyst](https://www.diagrid.io/catalyst) environment. No ops required!
 
 ```bash
 # Start with cloud-managed Dapr infrastructure
@@ -83,9 +84,11 @@ diagrid dev run -f dapr.yaml --project python-wf-app
 ```bash
 # Set the Dapr host address for cloud endpoint
 export DAPR_HOST_ENDPOINT=`diagrid project get python-wf-app -o json | grep '"http"' -A 2 | grep '"url"' | cut -d '"' -f 4`
+```
 
+```powershell
 # On Windows PowerShell:
-# $env:DAPR_HOST_ENDPOINT = "$(diagrid project get --project python-wf-app -o json | ConvertFrom-Json | Select-Object -ExpandProperty status | Select-Object -ExpandProperty endpoints | Select-Object -ExpandProperty http | Select-Object -ExpandProperty url)"
+$env:DAPR_HOST_ENDPOINT = "$(diagrid project get --project python-wf-app -o json | ConvertFrom-Json | Select-Object -ExpandProperty status | Select-Object -ExpandProperty endpoints | Select-Object -ExpandProperty http | Select-Object -ExpandProperty url)"
 ```
 
 #### 5. Start a Workflow
@@ -94,18 +97,22 @@ export DAPR_HOST_ENDPOINT=`diagrid project get python-wf-app -o json | grep '"ht
 curl -X POST ${DAPR_HOST_ENDPOINT}:3984/v1.0/workflows/dapr/build_pipeline_workflow/start \
    -H "Content-Type: application/json" \
    -d '{"data": {"unit_tests_required": true}}'
+```
 
-# On Windows PowerShell:
-# Invoke-WebRequest -Method POST -Uri $Env:DAPR_HOST_ENDPOINT:3984/v1.0/workflows/dapr/build_pipeline_workflow/start -ContentType "application/json" -Body '{"data":{"unit_tests_required": true}}'
+```powershell
+Invoke-WebRequest -Method POST -Uri $Env:DAPR_HOST_ENDPOINT:3984/v1.0/workflows/dapr/build_pipeline_workflow/start `
+  -ContentType "application/json" `
+  -Body '{"data":{"unit_tests_required": true}}'
 ```
 
 #### 6. Check Workflow Status
 ```bash
 # Replace <instance-id> with the ID returned from the start command
 curl -s ${DAPR_HOST_ENDPOINT}:3984/v1.0/workflows/dapr/<instance-id>
+```
 
-# On Windows PowerShell:
-# Invoke-WebRequest -Uri $Env:DAPR_HOST_ENDPOINT:3984/v1.0/workflows/dapr/<instance-id>
+```powershell
+Invoke-WebRequest -Uri $Env:DAPR_HOST_ENDPOINT:3984/v1.0/workflows/dapr/<instance-id>
 ```
 
 </details>
@@ -167,9 +174,11 @@ dapr run -f .
 ```bash
 # Set the Dapr host address
 export DAPR_HOST_ENDPOINT=http://localhost
+```
 
+```powershell
 # On Windows PowerShell:
-# $env:DAPR_HOST_ENDPOINT = "http://localhost"
+$env:DAPR_HOST_ENDPOINT = "http://localhost"
 ```
 
 #### 5. Start a Workflow
@@ -178,18 +187,22 @@ export DAPR_HOST_ENDPOINT=http://localhost
 curl -X POST ${DAPR_HOST_ENDPOINT}:3984/v1.0/workflows/dapr/build_pipeline_workflow/start \
    -H "Content-Type: application/json" \
    -d '{"data": {"unit_tests_required": true}}'
+```
 
-# On Windows PowerShell:
-# Invoke-WebRequest -Method POST -Uri $Env:DAPR_HOST_ENDPOINT:3984/v1.0/workflows/dapr/build_pipeline_workflow/start -ContentType "application/json" -Body '{"data":{"unit_tests_required": true}}'
+```powershell
+Invoke-WebRequest -Method POST -Uri $Env:DAPR_HOST_ENDPOINT:3984/v1.0/workflows/dapr/build_pipeline_workflow/start `
+  -ContentType "application/json" `
+  -Body '{"data":{"unit_tests_required": true}}'
 ```
 
 #### 6. Check Workflow Status
 ```bash
 # Replace <instance-id> with the ID returned from the start command
 curl -s ${DAPR_HOST_ENDPOINT}:3984/v1.0/workflows/dapr/<instance-id>
+```
 
-# On Windows PowerShell:
-# Invoke-WebRequest -Uri $Env:DAPR_HOST_ENDPOINT:3984/v1.0/workflows/dapr/<instance-id>
+```powershell
+Invoke-WebRequest -Uri $Env:DAPR_HOST_ENDPOINT:3984/v1.0/workflows/dapr/<instance-id>
 ```
 
 </details>
@@ -225,7 +238,7 @@ This is useful for debugging and understanding the flow of data through the work
 
 This workflow contains several decision points that determine the flow of execution.
 
-You can customize by setting specific values in the `WorkflowData`. 
+You can customize by setting specific values in the `WorkflowData`.
 
 Decision points are in most cases mutually exclusive - only one should be set to `true`.
 | Example Condition | `is_approved` | `data.set_value("is_approved", True)` |
@@ -312,11 +325,11 @@ if data.get_bool("is_approved")
 
 # Production code:
 approved = await approval_service.validate_approval(
-    request.order_id, 
-    workflow_execution.instance_id
+   request.order_id,
+   workflow_execution.instance_id
 )
 if approved:
-    # Handle approval logic
+# Handle approval logic
 ```
 
 ### Handling Complexity
