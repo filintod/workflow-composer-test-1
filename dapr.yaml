@@ -1,0 +1,13 @@
+version: 1
+common:
+  resourcesPath: ./components
+apps:
+  - appID: employeeonboardingworkflow-app
+    appDirPath: .
+    appPort: 8308
+    daprHTTPPort: 3860
+    daprGRPCPort: 50143
+    appHealthCheckPath: "/healthz"        
+    env:
+      DEBUG: true
+    command: ["python3", "src/app.py"]

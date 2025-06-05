@@ -1,0 +1,97 @@
+###
+### Dapr Workflow API Reference for VS Code
+### Generated template for interacting with employee_onboarding_workflow workflow
+###
+
+# HOW TO USE THIS FILE
+# =====================
+# This file contains REST API requests for interacting with Dapr Workflows.
+# It's SPECIFICALLY DESIGNED FOR VS CODE with the REST Client extension.
+# For JetBrains IDEs, use the separate workflow-jetbrains.http file instead.
+# 
+# PREREQUISITES:
+# 1. Your Dapr application must be running (use `make start` to launch it)
+# 2. Your workflow must be registered with the Dapr runtime
+# 3. Install the "REST Client" extension by Huachao Mao in VS Code
+#
+# VS CODE-SPECIFIC FEATURES:
+# - Variables are defined with @ prefix: @variableName = value
+# - Response variables use special syntax: {{ request.response.body.propertyName }}
+# - Environment variables can be defined in .vscode/settings.json
+# - Variables from one request are accessible in subsequent requests
+#
+# COMMON WORKFLOWS:
+# 1. Start a workflow -> The instanceID will be automatically captured from the response
+# 2. Get workflow status using the automatically captured instanceID
+# 3. If needed, raise events to trigger workflow transitions
+# 4. For debugging/cleanup, use pause/resume/terminate/purge endpoints
+#
+# SETTING VARIABLES IN VS CODE:
+# - After running the "Start workflow" request, VS Code will automatically capture the
+#   instanceID from the response and make it available to subsequent requests
+# - No manual copying is required - just run the requests in sequence
+#
+# VARIABLES:
+# - HOST: Automatically set to the Dapr HTTP port from your environment
+# - WORKFLOW_COMPONENT: Set to "dapr" for the built-in Dapr workflow engine
+# - WORKFLOW_NAME: Automatically set to your generated workflow name
+# - EVENT_NAME: Update this value when raising events to workflows
+
+# Ports should be the same as the ones in the Makefile and dapr.yaml file.
+@host = http://localhost:3860
+@workflowComponent = dapr
+@workflowName = employee_onboarding_workflow
+
+### Start workflow
+# Start a workflow instance with the given name
+# @name startWorkflow
+POST {{ host }}/v1.0/workflows/{{ workflowComponent }}/{{ workflowName }}/start
+Content-Type: application/json
+
+{
+  "data": {
+    
+  }
+}
+
+###
+# This variable is automatically set from the response of the previous request
+# In VS Code's REST Client, the response of a named request can be referenced 
+# using the syntax: @variableName = {{requestName.response.body.property}}
+@createdInstanceID = {{ startWorkflow.response.body.instanceID }}
+
+### Get workflow information
+# Get information about a given workflow instance
+# Uses the instanceID automatically captured from the previous request
+GET {{ host }}/v1.0/workflows/{{ workflowComponent }}/{{ createdInstanceID }}
+
+### Raise event to workflow
+# Deliver a named event to a specific workflow instance
+# We did not find any external event labels in the current workflow, so this is an example of raising an event
+@eventName = myEvent
+POST {{ host }}/v1.0/workflows/{{ workflowComponent }}/{{ createdInstanceID }}/raiseEvent/{{ eventName }}
+Content-Type: application/json
+
+{
+  "data": {
+    "approve": true
+  }
+}
+
+### Pause workflow
+# Pause a running workflow instance
+POST {{ host }}/v1.0/workflows/{{ workflowComponent }}/{{ createdInstanceID }}/pause
+
+### Resume workflow
+# Resume a paused workflow instance
+POST {{ host }}/v1.0/workflows/{{ workflowComponent }}/{{ createdInstanceID }}/resume
+
+### Terminate workflow
+# Terminate a running workflow instance
+# Note: This also terminates all child workflows and has no effect on in-flight activities
+POST {{ host }}/v1.0/workflows/{{ workflowComponent }}/{{ createdInstanceID }}/terminate
+
+### Purge workflow
+# Purge the workflow state from the state store
+# Note: Only COMPLETED, FAILED, or TERMINATED workflows can be purged
+POST {{ host }}/v1.0/workflows/{{ workflowComponent }}/{{ createdInstanceID }}/purge

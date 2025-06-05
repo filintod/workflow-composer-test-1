@@ -1,0 +1,144 @@
+###
+### Dapr Workflow API Reference for JetBrains IDEs
+### Generated template for interacting with employee_onboarding_workflow workflow
+###
+
+# HOW TO USE THIS FILE
+# =====================
+# This file contains REST API requests for interacting with Dapr Workflows.
+# It's SPECIFICALLY DESIGNED FOR JETBRAINS IDEs (IntelliJ IDEA, GoLand, etc.).
+# For VS Code, use the separate workflow-vscode.http file instead.
+# 
+# PREREQUISITES:
+# 1. Your Dapr application must be running (use `make start` to launch it)
+# 2. Your workflow must be registered with the Dapr runtime
+# 3. This file works with JetBrains' built-in HTTP Client
+#
+# JETBRAINS-SPECIFIC FEATURES:
+# - Response handling scripts are enclosed within {% %} tags
+# - Variables are set using client.global.set("variable_name", value)
+# - Variables are accessed using {{variable_name}}
+# - Tests can be performed using client.test() and client.assert()
+#
+# COMMON WORKFLOWS:
+# 1. Start a workflow -> The instanceID will be automatically saved to a variable
+# 2. Get workflow status using the automatically stored instanceID
+# 3. If needed, raise events to trigger workflow transitions
+# 4. For debugging/cleanup, use pause/resume/terminate/purge endpoints
+#
+# VARIABLES:
+# - HOST: Automatically set to the Dapr HTTP port from your environment
+# - WORKFLOW_COMPONENT: Set to "dapr" for the built-in Dapr workflow engine
+# - WORKFLOW_NAME: Automatically set to your generated workflow name
+# - EVENT_NAME: Update this value when raising events to workflows
+
+# Ports should be the same as the ones in the Makefile and dapr.yaml file.
+@host = http://localhost:3860
+@workflowComponent = dapr
+@workflowName = employee_onboarding_workflow
+
+### Start workflow
+# Start a workflow instance with the given name
+# @name startWorkflow
+POST {{ host }}/v1.0/workflows/{{ workflowComponent }}/{{ workflowName }}/start
+Content-Type: application/json
+
+{
+  "data": {
+    
+  }
+}
+
+> {%
+    // Automatically save the instanceID from the response to a variable
+    client.test("Workflow started successfully", function() {
+        client.assert(response.status === 202, "Response status is not 202 Accepted");
+        client.assert(response.body.hasOwnProperty("instanceID"), "Response does not contain instanceID");
+    });
+    
+    // Set the instanceID as a global variable for subsequent requests
+    client.global.set("createdInstanceID", response.body.instanceID);
+    client.log("Workflow instance created with ID: " + response.body.instanceID);
+%}
+
+### Get workflow information
+# Get information about a given workflow instance
+# This uses the instanceID automatically captured from the previous request
+GET {{ host }}/v1.0/workflows/{{ workflowComponent }}/{{ createdInstanceID }}
+
+> {%
+    client.test("Workflow information retrieved", function() {
+        client.assert(response.status === 200, "Response status is not 200 OK");
+        client.log("Workflow status: " + response.body.runtimeStatus);
+    });
+
+    // Print the output of the workflow similar to pipe to jq. Will show up in Response Handlers tab
+    if (response.body.properties.hasOwnProperty("dapr.workflow.output")) {
+        client.log(JSON.parse(response.body.properties["dapr.workflow.output"]));
+    } else {
+        client.log("No workflow output found");
+    }
+
+%}
+
+### Raise event to workflow
+# Deliver a named event to a specific workflow instance
+# Available events:
+# We did not find any external event labels in the current workflow, so this is an example of raising an event
+@eventName = myEvent
+POST {{ host }}/v1.0/workflows/{{ workflowComponent }}/{{ createdInstanceID }}/raiseEvent/{{ eventName }}
+Content-Type: application/json
+
+{
+  "data": {
+    "approve": true
+  }
+}
+
+> {%
+    client.test("Event raised successfully", function() {
+        client.assert(response.status === 202, "Response status is not 202 Accepted");
+    });
+%}
+
+### Pause workflow
+# Pause a running workflow instance
+POST {{ host }}/v1.0/workflows/{{ workflowComponent }}/{{ createdInstanceID }}/pause
+
+> {%
+    client.test("Workflow paused successfully", function() {
+        client.assert(response.status === 202, "Response status is not 202 Accepted");
+    });
+%}
+
+### Resume workflow
+# Resume a paused workflow instance
+POST {{host}}/v1.0/workflows/{{ workflowComponent }}/{{ createdInstanceID }}/resume
+
+> {%
+    client.test("Workflow resumed successfully", function() {
+        client.assert(response.status === 202, "Response status is not 202 Accepted");
+    });
+%}
+
+### Terminate workflow
+# Terminate a running workflow instance
+# Note: This also terminates all child workflows and has no effect on in-flight activities
+POST {{ host }}/v1.0/workflows/{{ workflowComponent }}/{{ createdInstanceID }}/terminate
+
+> {%
+    client.test("Workflow terminated successfully", function() {
+        client.assert(response.status === 202, "Response status is not 202 Accepted");
+    });
+%}
+
+### Purge workflow
+# Purge the workflow state from the state store
+# Note: Only COMPLETED, FAILED, or TERMINATED workflows can be purged
+POST {{ host }}/v1.0/workflows/{{ workflowComponent }}/{{ createdInstanceID }}/purge
+
+> {%
+    client.test("Workflow purged successfully", function() {
+        client.assert(response.status === 202, "Response status is not 202 Accepted");
+    });
+%}

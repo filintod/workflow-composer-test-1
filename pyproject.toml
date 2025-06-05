@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "employee_onboarding_workflow"
+version = "0.1.0"
+description = "employee_onboarding_workflow workflow implementation using Dapr"
+authors = [
+    { name = "Dapr User", email = "user@example.com" }
+]
+requires-python = ">=3.9"
+license = "MIT"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    # Dapr
+    "dapr-ext-fastapi",
+    "dapr-ext-workflow",
+    "dapr",
+    "durabletask-dapr",
+    # Web Framework
+    "fastapi",
+    "uvicorn",
+    "pydantic",
+    # Utils
+    "python-dotenv",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-asyncio",
+    "requests",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
