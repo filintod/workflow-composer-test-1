@@ -1,6 +1,6 @@
-# employee_onboarding_workflow
+# invoice_approval_workflow
 
-### Handles the parallel preparation of equipment and paperwork for new employee onboarding.
+### Handles the approval process for invoices based on amount thresholds.
 
 ---
 
@@ -12,14 +12,14 @@ _Version_: `development`
 
 ## 🧭 Workflow Diagram
 
-[<img src="EmployeeOnboardingWorkflow.png" alt="employee_onboarding_workflow" style="display: block; margin: 0 auto; border: 2px solid #444; width: auto; max-width: 80%; max-height: 700px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" />](EmployeeOnboardingWorkflow.png)
+[<img src="InvoiceApprovalWorkflow.png" alt="invoice_approval_workflow" style="display: block; margin: 0 auto; border: 2px solid #444; width: auto; max-width: 80%; max-height: 700px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" />](InvoiceApprovalWorkflow.png)
 
 
 ---
 
 ## 🚀 Choose Your Deployment Path
 
-> 📋 **Quick Decision Guide**
+> 📋 **Quick Decision Guide**  
 > - **🌟 [Catalyst](https://www.diagrid.io/catalyst) (Recommended)**: Skip the fragmented libraries and infrastructure setup. Ready to go in under 60 seconds with fully managed, open-source Dapr. Focus on business logic, not boilerplate.
 > - **🛠️ Local Development**: Choose this for offline development, learning Dapr internals, or when you need full infrastructure control.
 >
@@ -29,9 +29,6 @@ _Version_: `development`
 
 <details>
 <summary><strong>☁️ Diagrid Catalyst</strong> (Cloud-Managed Dapr)</summary>
-
-👉 Learn more at [diagrid.io/catalyst](https://www.diagrid.io/catalyst)
-
 
 ### Prerequisites
 - [Python 3.9 or later](https://www.python.org/downloads/)
@@ -81,6 +78,8 @@ diagrid dev run -f dapr.yaml --project python-wf-app
 ```
 
 #### 4. Configure Environment (in a new terminal)
+**Choose the commands for your platform:**
+
 ```bash
 # Set the Dapr host address for cloud endpoint
 export DAPR_HOST_ENDPOINT=`diagrid project get python-wf-app -o json | grep '"http"' -A 2 | grep '"url"' | cut -d '"' -f 4`
@@ -92,6 +91,8 @@ $env:DAPR_HOST_ENDPOINT = "$(diagrid project get --project python-wf-app -o json
 ```
 
 #### 5. Start a Workflow
+**Choose the commands for your platform:**
+
 ```bash
 # Wait a moment for the application to start, then:
 curl -X POST ${DAPR_HOST_ENDPOINT}:3984/v1.0/workflows/dapr/build_pipeline_workflow/start \
@@ -106,6 +107,8 @@ Invoke-WebRequest -Method POST -Uri $Env:DAPR_HOST_ENDPOINT:3984/v1.0/workflows/
 ```
 
 #### 6. Check Workflow Status
+**Choose the commands for your platform:**
+
 ```bash
 # Replace <instance-id> with the ID returned from the start command
 curl -s ${DAPR_HOST_ENDPOINT}:3984/v1.0/workflows/dapr/<instance-id>
@@ -171,6 +174,8 @@ dapr run -f .
 ```
 
 #### 4. Configure Environment (in a new terminal)
+**Choose the commands for your platform:**
+
 ```bash
 # Set the Dapr host address
 export DAPR_HOST_ENDPOINT=http://localhost
@@ -182,6 +187,8 @@ $env:DAPR_HOST_ENDPOINT = "http://localhost"
 ```
 
 #### 5. Start a Workflow
+**Choose the commands for your platform:**
+
 ```bash
 # Wait a moment for the application to start, then:
 curl -X POST ${DAPR_HOST_ENDPOINT}:3984/v1.0/workflows/dapr/build_pipeline_workflow/start \
@@ -196,6 +203,8 @@ Invoke-WebRequest -Method POST -Uri $Env:DAPR_HOST_ENDPOINT:3984/v1.0/workflows/
 ```
 
 #### 6. Check Workflow Status
+**Choose the commands for your platform:**
+
 ```bash
 # Replace <instance-id> with the ID returned from the start command
 curl -s ${DAPR_HOST_ENDPOINT}:3984/v1.0/workflows/dapr/<instance-id>
@@ -238,11 +247,21 @@ This is useful for debugging and understanding the flow of data through the work
 
 This workflow contains several decision points that determine the flow of execution.
 
-You can customize by setting specific values in the `WorkflowData`.
+You can customize by setting specific values in the `WorkflowData`. 
 
 Decision points are in most cases mutually exclusive - only one should be set to `true`.
-| Example Condition | `is_approved` | `data.set_value("is_approved", True)` |
-| Example Validation | `is_valid` | `data.set_value("is_valid", check_validity(data))` |
+
+--- 
+
+**Decision Point 'Determines approval path based on invoice amount.'**
+
+Choose one of:
+
+| Decision Point | Property Key | Example Use |
+|----------------|--------------|-------------|
+| Determines approval path based on invoice amount. | `amount_over_ten_thousand` | `data.set_value("amount_over_ten_thousand", True)` |
+| Determines approval path based on invoice amount. | `amount_over_thousand` | `data.set_value("amount_over_thousand", True)` |
+| Determines approval path based on invoice amount. | `amount_under_thousand` | `data.set_value("amount_under_thousand", True)` |
 
 ### Benefits and Limitations of the Data Model
 
@@ -325,11 +344,11 @@ if data.get_bool("is_approved")
 
 # Production code:
 approved = await approval_service.validate_approval(
-   request.order_id,
-   workflow_execution.instance_id
+    request.order_id, 
+    workflow_execution.instance_id
 )
 if approved:
-# Handle approval logic
+    # Handle approval logic
 ```
 
 ### Handling Complexity
