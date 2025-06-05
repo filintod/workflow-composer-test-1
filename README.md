@@ -27,7 +27,7 @@ _Version_: `development`
 > **Building for production?** → **[Catalyst](https://www.diagrid.io/catalyst)** provides fault-tolerant, durable execution  
 > **Learning or customizing?** → **Local Dapr** gives you full control and insight
 
-<details>
+<details open>
 <summary style="font-size: x-large"><strong>☁️ Diagrid Catalyst</strong> (Cloud-Managed Dapr)</summary>
 
 ### Prerequisites
