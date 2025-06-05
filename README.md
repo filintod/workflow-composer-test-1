@@ -28,7 +28,7 @@ _Version_: `development`
 > **Learning or customizing?** → **Local Dapr** gives you full control and insight
 
 <details>
-<summary><strong>☁️ Diagrid Catalyst</strong> (Cloud-Managed Dapr)</summary>
+<summary style="font-size: large"><strong>☁️ Diagrid Catalyst</strong> (Cloud-Managed Dapr)</summary>
 
 ### Prerequisites
 - [Python 3.9 or later](https://www.python.org/downloads/)
@@ -121,7 +121,7 @@ Invoke-WebRequest -Uri $Env:DAPR_HOST_ENDPOINT:3984/v1.0/workflows/dapr/<instanc
 </details>
 
 <details>
-<summary><strong>🏠 Local Dapr Development</strong></summary>
+<summary style="font-size: large"><strong>🏠 Local Dapr Development</strong></summary>
 
 ### Prerequisites
 - [Python 3.9 or later](https://www.python.org/downloads/)
